@@ -8,16 +8,14 @@ class Find_Path (object):
         self.n_nodes = self.graph_points.shape[0]
         self.prob_matrix = np.zeros((self.n_nodes, self.n_nodes))
         self.pheremone_matrix = np.zeros((self.n_nodes, self.n_nodes))
-        self.distance_matrix = np.zeros((self.n_nodes, self.n_nodes))
+
+        a = graph_points.reshape(self.n_nodes, 1, 2)
+        b = a.reshape(1, self.n_nodes, 2)
+        self.distance_matrix = np.linalg.norm(a-b, axis=2)
+
         self.best_route = []
         self.best_route_indices = []
 
-        # Just fills the cost matrix between each node
-        for i in range(self.n_nodes):
-            for j in range(self.n_nodes):
-                # Euclidian Distance between point[i] and point[j]
-                self.distance_matrix[i][j] = np.linalg.norm(
-                    self.graph_points[i] - self.graph_points[j])
 
     """ ACO Implementation """
 
@@ -188,7 +186,7 @@ class Find_Path (object):
         plt.show()
 
     def _g(self, i, s) -> int:
-        print(i, s)
+        # print(i, s)
         # Base Case : s is an empty set
         if not len(s):
             return self.distance_matrix[i][0]
@@ -225,6 +223,8 @@ graph_points = np.array(
 )
 
 a = Find_Path(graph_points)
-print(a.DP_optimal_distance()) 
 print(a.ant_colony())
 a.plot_best_route()
+
+# use it if you have a super computer 
+# print(a.DP_optimal_distance()) 
