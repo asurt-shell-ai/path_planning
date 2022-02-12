@@ -11,16 +11,15 @@ class Find_Path (object):
         self.distance_matrix = np.zeros((self.n_nodes, self.n_nodes))
         self.best_route = []
         self.best_route_indices = []
-        
-    """ ACO Implementation """
-    def __fill_distance_matrix(self):
-        # Just fills the cost matrix between each node
 
+        # Just fills the cost matrix between each node
         for i in range(self.n_nodes):
             for j in range(self.n_nodes):
                 # Euclidian Distance between point[i] and point[j]
                 self.distance_matrix[i][j] = np.linalg.norm(
                     self.graph_points[i] - self.graph_points[j])
+
+    """ ACO Implementation """
 
     def __get_max_prob_index(self, root_index, visited, beta=5, alpha=1):
 
@@ -71,9 +70,7 @@ class Find_Path (object):
                     Q/distances_travelled[k]
 
     def ant_colony(self):
-
-        self.__fill_distance_matrix()
-        # like MAX_INT in c++ 
+        # like MAX_INT in c++
         best_total_distance = 1000000
 
         n_iterations = self.n_nodes * 3
@@ -83,7 +80,7 @@ class Find_Path (object):
 
             # to store the total pherimones secreted by k_ants
             distances_travelled = []
-            # contains all the paths in the iteration 
+            # contains all the paths in the iteration
             paths = []
             for k in range(k_ants):
                 # Evaluates array of Falses
@@ -100,7 +97,7 @@ class Find_Path (object):
                 # The root is marked as visited
                 visited[root_index] = True
 
-                # ndArray of all the nodes excpet the root as it's visited 
+                # ndArray of all the nodes excpet the root as it's visited
                 nodes_not_visited = np.delete(self.graph_points, root_index, 0)
 
                 # add the root node to the path
@@ -173,13 +170,14 @@ class Find_Path (object):
 
             # update the pheremone Matrix
             self.__update_pheremones(distances_travelled, paths)
-            
+
             # print(pheremone_matrix)
 
         print(f"{best_total_distance = }")
-        self.best_route = np.array([self.graph_points[i] for i in self.best_route_indices])
+        self.best_route = np.array([self.graph_points[i]
+                                   for i in self.best_route_indices])
         return self.best_route
-    
+
     def plot_best_route(self):
         if not len(self.best_route):
             print("you should find the path first\nuse ant_colony()")
@@ -188,7 +186,18 @@ class Find_Path (object):
         plt.scatter(self.graph_points[:, 0], self.graph_points[:, 1])
         plt.plot(self.best_route[:, 0], self.best_route[:, 1])
         plt.show()
-        
+
+    def _g(self, i, s) -> int:
+        print(i, s)
+        # Base Case : s is an empty set
+        if not len(s):
+            return self.distance_matrix[i][0]
+
+        return min([self.distance_matrix[i][k] + self._g(k, s-{k}) for k in s])
+
+    # SUPER SLOW but finds the distance of the optimal path
+    def DP_optimal_distance(self):
+        return self._g(0, set(range(self.n_nodes))-{0})
 
 
 # TEST
@@ -216,5 +225,6 @@ graph_points = np.array(
 )
 
 a = Find_Path(graph_points)
+print(a.DP_optimal_distance()) 
 print(a.ant_colony())
 a.plot_best_route()
