@@ -7,7 +7,7 @@ class Find_Path (object):
         self.graph_points = graph_points
         self.n_nodes = self.graph_points.shape[0]
         self.prob_matrix = np.zeros((self.n_nodes, self.n_nodes))
-        self.pheromone_matrix = np.zeros((self.n_nodes, self.n_nodes))
+        self.pheremone_matrix = np.zeros((self.n_nodes, self.n_nodes))
 
         a = graph_points.reshape(self.n_nodes, 1, 2)
         b = a.reshape(1, self.n_nodes, 2)
@@ -16,6 +16,7 @@ class Find_Path (object):
         self.best_route = []
         self.best_route_indices = []
 
+
     """ ACO Implementation """
 
     def __get_max_prob_index(self, root_index, visited, beta=5, alpha=1):
@@ -23,16 +24,16 @@ class Find_Path (object):
         # list contains the probability of each unvisited node
         probs = []
 
-        # we want the pheromones of the nodes we didn't visit yet
-        root_pheromones = np.multiply(
-            self.pheromone_matrix[root_index], np.logical_xor(visited, 1))
+        # we want the pheremones of the nodes we'didnt visit yet
+        root_pheremones = np.multiply(
+            self.pheremone_matrix[root_index], np.logical_xor(visited, 1))
 
-        # if all the pheromones are zeros, it means that we are still in the first Iteration
-        if np.all(root_pheromones == 0):
+        # if all the pheremones are zeros, it means that we are still in the first Iteration
+        if np.all(root_pheremones == 0):
             return -1
 
         # pher ** alpha
-        pher_pow_alpha = np.power(root_pheromones, alpha)
+        pher_pow_alpha = np.power(root_pheremones, alpha)
 
         # ( 1 / dist ) ** beta
         dists_pow_beta = np.power(
@@ -48,22 +49,22 @@ class Find_Path (object):
         for pher, dist in zip(pher_pow_alpha, dists_pow_beta):
             probs.append((pher * dist) / s)
 
-        # returning the index of the max probability
+        # retunring the index of the max probability
         return probs.index(max(probs))
 
-    def __update_pheromones(self, distances_travelled, paths, Q=100, row=.5):
+    def __update_pheremones(self, distances_travelled, paths, Q=100, row=.5):
         for k in range(len(paths)):
             for i in range(len(paths[k]) - 1):
 
                 node_i = paths[k][i]
                 after_node_i = paths[k][i+1]
 
-                # as the graph is undirected
-                self.pheromone_matrix[node_i][after_node_i] = row * \
-                    self.pheromone_matrix[node_i][after_node_i] + \
+                # as the graph is undirceted
+                self.pheremone_matrix[node_i][after_node_i] = row * \
+                    self.pheremone_matrix[node_i][after_node_i] + \
                     Q/distances_travelled[k]
-                self.pheromone_matrix[after_node_i][node_i] = row * \
-                    self.pheromone_matrix[after_node_i][node_i] + \
+                self.pheremone_matrix[after_node_i][node_i] = row * \
+                    self.pheremone_matrix[after_node_i][node_i] + \
                     Q/distances_travelled[k]
 
     def ant_colony(self):
@@ -75,18 +76,18 @@ class Find_Path (object):
 
         for i in range(n_iterations):
 
-            # to store the total pheromones secreted by k_ants
+            # to store the total pherimones secreted by k_ants
             distances_travelled = []
             # contains all the paths in the iteration
             paths = []
             for k in range(k_ants):
-                # Evaluates array of False
+                # Evaluates array of Falses
                 visited = np.zeros(self.n_nodes)
 
                 # Distance travelled by the kth_ant
                 distance_travelled = 0
 
-                # a random root chosen from the graph
+                # a random root choosen from the graph
                 root = np.random.default_rng().choice(self.graph_points, 1, replace=False)
                 root_index = np.where(
                     np.all(self.graph_points == root, axis=1))[0][0]
@@ -108,7 +109,7 @@ class Find_Path (object):
                         iterator_root_index, visited)
                     # if it's the first iteration
                     if max_prob_index == -1:
-                        # a random root chosen from neighbor_nodes
+                        # a random root choosen from neighbour_nodes
                         # which is garanteed to be not visited
                         new_root = np.random.default_rng().choice(nodes_not_visited, 1, replace=False)
 
@@ -126,13 +127,13 @@ class Find_Path (object):
                     # The new_root is marked as visited
                     visited[new_root_index] = True
 
-                    # taking the index of the root based on neighbors array
-                    new_root_index_neighbor = np.where(
+                    # taking the index of the root based on neighbours array
+                    new_root_index_neighbour = np.where(
                         np.all(nodes_not_visited == new_root, axis=1))[0][0]
 
                     # ndArray of all the nodes excpet the new_root
                     nodes_not_visited = np.delete(
-                        nodes_not_visited, new_root_index_neighbor, 0)
+                        nodes_not_visited, new_root_index_neighbour, 0)
 
                     # add the new_root node to the path
                     path_indices.append(new_root_index)
@@ -165,10 +166,10 @@ class Find_Path (object):
             # print(paths)
             # print(distance_travelled)
 
-            # update the pheromone Matrix
-            self.__update_pheromones(distances_travelled, paths)
+            # update the pheremone Matrix
+            self.__update_pheremones(distances_travelled, paths)
 
-            # print(pheromone_matrix)
+            # print(pheremone_matrix)
 
         print(f"{best_total_distance = }")
         self.best_route = np.array([self.graph_points[i]
@@ -225,5 +226,5 @@ class Find_Path (object):
 # print(a.ant_colony())
 # a.plot_best_route()
 
-# use it if you have a super computer
-# print(a.DP_optimal_distance())
+# use it if you have a super computer 
+# print(a.DP_optimal_distance()) 

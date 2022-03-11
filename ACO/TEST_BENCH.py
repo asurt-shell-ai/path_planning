@@ -5,7 +5,7 @@ import pygame
 import pygame.gfxdraw
 from path_planning import *
 
-# initialize pygame
+# initaialize pygame
 pygame.init()
 
 # constants
@@ -18,9 +18,9 @@ GREEN = (0, 100, 0)
 GREY = (128, 128, 128)
 RED = (255, 0, 0)
 ROAD_WIDTH = 70  # Just an Arbitrary Number
-BLOCK_LENGTH = int((HEIGHT - 3 * ROAD_WIDTH)/2)  # BOOM MATH !!!
+BLOCK_LENGTH = int((HEIGHT - 3 * ROAD_WIDTH)/2)  # BOOOM MATH !!!
 
-# variable controls what appears on the screen
+# variable controls what appeares on the screen
 # set the screen size to be 500px x 500px
 screen = pygame.display.set_mode(WINDOW_SIZE)
 
